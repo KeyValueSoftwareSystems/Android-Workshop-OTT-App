@@ -2,39 +2,42 @@ package com.keyvalue.workshop.ottworkshopapp.data.repositoryimpl
 
 import RetrofitHelper
 import com.keyvalue.workshop.ottworkshopapp.data.remote.MovieApi
-import com.keyvalue.workshop.ottworkshopapp.domain.model.MovieDetails
+import com.keyvalue.workshop.ottworkshopapp.domain.model.Movie
+import com.keyvalue.workshop.ottworkshopapp.domain.model.MovieDetail
 import com.keyvalue.workshop.ottworkshopapp.domain.repository.MovieRepository
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class MovieRepositoryImpl(): MovieRepository {
-    private val movieApi: MovieApi
+    private val movieApi: MovieApi = RetrofitHelper.getInstance().create(MovieApi::class.java)
 
-    init {
-        movieApi = RetrofitHelper.getInstance().create(MovieApi::class.java)
-    }
-    private val apiKey = "6bdf4be53d3f4ae40cc25fc31ab81906"
 
-    fun getMovies(callback: (List<MovieDetails>?) -> Unit) {
-        movieApi.getPopularMovies(apiKey).enqueue(object : Callback<List<MovieDetails>> {
-            override fun onResponse(call: Call<List<MovieDetails>>, response: Response<List<MovieDetails>>) {
+    private val token = "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2YmRmNGJlNTNkM2Y0YWU0MGNjMjVmYzMxYWI4MTkwNiIsInN1YiI6IjY1NWM4Njk2ZWE4NGM3MTA5NWEwYmIwMCIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.3Yc8hwk0Bn5_fJzTZIfjyTQ69mxOXeNruRjv-Dza9Ws"
+
+
+
+    fun getMovies(callback: (Movie?) -> Unit) {
+        movieApi.getPopularMovies("en-US",1,token).enqueue(object : Callback<Movie> {
+
+            override fun onResponse(call: Call<Movie>, response: Response<Movie>) {
                 if (response.isSuccessful) {
                     callback(response.body())
-                } else {
-                    callback(null)
+                }
+                else{
+                   callback(null)
                 }
             }
 
-            override fun onFailure(call: Call<List<MovieDetails>>, t: Throwable) {
+            override fun onFailure(call: Call<Movie>, t: Throwable) {
                 callback(null)
             }
         })
     }
 
-    fun getMovieDetail(movieId: Int, callback: (MovieDetails?) -> Unit) {
-        movieApi.getMovieDetail(movieId, apiKey).enqueue(object : Callback<MovieDetails> {
-            override fun onResponse(call: Call<MovieDetails>, response: Response<MovieDetails>) {
+    fun getMovieDetail(movieId: Int, callback: (MovieDetail?) -> Unit) {
+        movieApi.getMovieDetail(movieId, "en-US",token).enqueue(object : Callback<MovieDetail> {
+            override fun onResponse(call: Call<MovieDetail>, response: Response<MovieDetail>) {
                 if (response.isSuccessful) {
                     callback(response.body())
                 } else {
@@ -42,7 +45,7 @@ class MovieRepositoryImpl(): MovieRepository {
                 }
             }
 
-            override fun onFailure(call: Call<MovieDetails>, t: Throwable) {
+            override fun onFailure(call: Call<MovieDetail>, t: Throwable) {
                 callback(null)
             }
         })

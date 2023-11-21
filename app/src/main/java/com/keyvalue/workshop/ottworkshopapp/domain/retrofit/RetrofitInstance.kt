@@ -3,7 +3,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitHelper {
 
-    private const val baseUrl = "https://api.themoviedb.org/3/account/20728907/"
+    private const val baseUrl = "https://api.themoviedb.org/3/"
 
     fun getInstance(): Retrofit {
         return Retrofit.Builder().baseUrl(baseUrl)

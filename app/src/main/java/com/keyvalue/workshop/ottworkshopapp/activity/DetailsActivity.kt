@@ -6,7 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import com.keyvalue.workshop.ottworkshopapp.TAG
-import com.keyvalue.workshop.ottworkshopapp.domain.model.MovieDetails
+import com.keyvalue.workshop.ottworkshopapp.domain.model.Movie
 
 class DetailsActivity : ComponentActivity() {
 
@@ -18,7 +18,6 @@ class DetailsActivity : ComponentActivity() {
                 TAG,
                 "MovieDetails from Main Activity-> " + intent.getSerializableExtra(
                     "MovieDetail",
-                    MovieDetails::class.java
                 )
             )
         } else {
