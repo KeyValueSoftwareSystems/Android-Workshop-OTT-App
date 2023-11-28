@@ -17,13 +17,13 @@ class MovieViewModel: ViewModel() {
     private val _selectedMovie = MutableLiveData<MovieDetail>()
     val selectedMovie: LiveData<MovieDetail> get() = _selectedMovie
 
-    fun getMovies() {
+    suspend fun getMovies() {
         movieRepositoryImpl.getMovies {
             _movies.postValue(it)
         }
     }
 
-    fun getMovieDetail(movieId: Int) {
+   suspend fun getMovieDetail(movieId: Int) {
         movieRepositoryImpl.getMovieDetail(movieId) {
             _selectedMovie.postValue(it)
         }

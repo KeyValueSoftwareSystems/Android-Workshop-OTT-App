@@ -1,12 +1,18 @@
 package com.keyvalue.workshop.ottworkshopapp.data.repositoryimpl
 
 import RetrofitHelper
+import android.util.Log
+import com.keyvalue.workshop.ottworkshopapp.TAG
 import com.keyvalue.workshop.ottworkshopapp.data.remote.MovieApi
 import com.keyvalue.workshop.ottworkshopapp.domain.model.Movie
 import com.keyvalue.workshop.ottworkshopapp.domain.model.MovieDetail
 import com.keyvalue.workshop.ottworkshopapp.domain.repository.MovieRepository
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
 
 class MovieRepositoryImpl(): MovieRepository {
@@ -17,37 +23,89 @@ class MovieRepositoryImpl(): MovieRepository {
 
 
 
-    fun getMovies(callback: (Movie?) -> Unit) {
-        movieApi.getPopularMovies("en-US",1,token).enqueue(object : Callback<Movie> {
+    suspend fun getMovies(callback: suspend (Movie?) -> Unit) {
+        try {
+            val resp =  movieApi.getPopularMovies("en-US",1,token)
+            if(resp.isSuccessful)
+            {
+                callback(resp.body())
+
+            }
+            else
+            {
+                callback(null)
+            }
+        }catch (e:HttpException)
+        {
+            Log.d(TAG,"Code: "+e.code() + "Message: "+e.message())
+            callback(null)
+
+        }
+      /*  movieApi.getPopularMovies("en-US",1,token).enqueue(object : Callback<Movie> {
 
             override fun onResponse(call: Call<Movie>, response: Response<Movie>) {
                 if (response.isSuccessful) {
-                    callback(response.body())
+                    CoroutineScope(Dispatchers.IO).launch {
+                        callback(response.body())
+                    }
+
                 }
                 else{
-                   callback(null)
+                    CoroutineScope(Dispatchers.IO).launch {
+                        callback(null)
+
+                    }
                 }
             }
 
             override fun onFailure(call: Call<Movie>, t: Throwable) {
-                callback(null)
+                CoroutineScope(Dispatchers.IO).launch {
+                    callback(null)
+
+                }
             }
-        })
+        })*/
     }
 
-    fun getMovieDetail(movieId: Int, callback: (MovieDetail?) -> Unit) {
-        movieApi.getMovieDetail(movieId, "en-US",token).enqueue(object : Callback<MovieDetail> {
+    suspend fun getMovieDetail(movieId: Int, callback: suspend (MovieDetail?) -> Unit) {
+        try {
+            val resp =  movieApi.getMovieDetail(movieId, "en-US",token)
+            if(resp.isSuccessful)
+            {
+                callback(resp.body())
+
+            }
+            else
+            {
+                callback(null)
+            }
+        }catch (e:HttpException)
+        {
+            Log.d(TAG,"Code: "+e.code() + "Message: "+e.message())
+            callback(null)
+
+        }
+
+      /*  movieApi.getMovieDetail(movieId, "en-US",token).enqueue(object : Callback<MovieDetail> {
             override fun onResponse(call: Call<MovieDetail>, response: Response<MovieDetail>) {
                 if (response.isSuccessful) {
-                    callback(response.body())
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        callback(response.body())
+                    }
                 } else {
-                    callback(null)
+                    CoroutineScope(Dispatchers.IO).launch {
+
+                        callback(null)
+                    }
                 }
             }
 
             override fun onFailure(call: Call<MovieDetail>, t: Throwable) {
-                callback(null)
+                CoroutineScope(Dispatchers.IO).launch {
+                    callback(null)
+                }
             }
-        })
+        })*/
     }
 }
